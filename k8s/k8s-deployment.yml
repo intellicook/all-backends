@@ -1,0 +1,200 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mssql-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mssql-db
+  template:
+    metadata:
+      labels:
+        app: mssql-db
+    spec:
+      containers:
+      - name: mssql-db
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        ports:
+        - containerPort: 1433
+        env:
+        - name: MSSQL_SA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mssql-db-secret
+              key: PASSWORD
+        - name: ACCEPT_EULA
+          value: "Y"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "0.5"
+        volumeMounts:
+        - name: mssql-pv
+          mountPath: /var/opt/mssql
+      volumes:
+      - name: mssql-pv
+        persistentVolumeClaim:
+          claimName: mssql-pvc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-db
+  template:
+    metadata:
+      labels:
+        app: postgres-db
+    spec:
+      containers:
+      - name: postgres-db
+        image: postgres:14
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: recipe-search-cm
+              key: DB_NAME
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-db-secret
+              key: USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-db-secret
+              key: PASSWORD
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "0.5"
+        volumeMounts:
+        - name: postgres-pv
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: postgres-pv
+        persistentVolumeClaim:
+          claimName: postgres-pvc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-controller-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-controller-api
+  template:
+    metadata:
+      labels:
+        app: app-controller-api
+    spec:
+      containers:
+      - name: app-controller-api
+        image: <app-controller-image>
+        ports:
+        - containerPort: 8080
+        - containerPort: 8081
+        envFrom:
+        - configMapRef:
+            name: app-controller-cm
+        - secretRef:
+            name: app-controller-secret
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "0.5"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-api
+  template:
+    metadata:
+      labels:
+        app: auth-api
+    spec:
+      containers:
+      - name: auth-api
+        image: <auth-image>
+        ports:
+        - containerPort: 8080
+        - containerPort: 8081
+        envFrom:
+        - configMapRef:
+            name: auth-cm
+        - secretRef:
+            name: auth-secret
+        env:
+        - name: Database__Password
+          valueFrom:
+            secretKeyRef:
+              name: mssql-db-secret
+              key: PASSWORD
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "0.5"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recipe-search-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: recipe-search-api
+  template:
+    metadata:
+      labels:
+        app: recipe-search-api
+    spec:
+      containers:
+      - name: recipe-search-api
+        image: <recipe-search-image>
+        ports:
+        - containerPort: 2505
+        envFrom:
+        - configMapRef:
+            name: recipe-search-cm
+        - secretRef:
+            name: recipe-search-secret
+        env:
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-db-secret
+              key: PASSWORD
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-db-secret
+              key: USER
+        - name: DOMAIN_DEFAULT_FAISS_INDEX_PATH
+          value: /usr/data/faiss.index
+        resources:
+          requests:
+            memory: "4Gi"
+            cpu: "2"
+        volumeMounts:
+        - name: recipe-search-pv
+          mountPath: /usr/data
+      volumes:
+      - name: recipe-search-pv
+        persistentVolumeClaim:
+          claimName: recipe-search-pvc

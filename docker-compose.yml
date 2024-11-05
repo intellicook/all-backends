@@ -1,0 +1,88 @@
+services:
+  app-controller-api:
+    image: intellicook.appcontroller.api
+    build:
+      context: ${APP_CONTROLLER_PATH}
+      dockerfile: ${APP_CONTROLLER_PATH}/IntelliCook.AppController.Api/Dockerfile
+      args:
+        GITHUB_PAT: ${APP_CONTROLLER_Build__GithubPat}
+    ports:
+      - 2501:8080
+      - 2502:8081
+    env_file:
+      - ${APP_CONTROLLER_PATH}/.env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+
+  auth-api:
+    image: intellicook.auth.host
+    build:
+      context: ${AUTH_PATH}
+      dockerfile: ${AUTH_PATH}/IntelliCook.Auth.Host/Dockerfile
+    ports:
+      - 2503:8080
+      - 2504:8081
+    env_file:
+      - ${AUTH_PATH}/.env
+    environment:
+      - Database__Host=mssql-db
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+    depends_on:
+      mssql-db:
+        condition: service_healthy
+
+  recipe-search-api:
+    image: intellicook.recipesearch.api
+    build: ${RECIPE_SEARCH_PATH}
+    volumes:
+      - ${RECIPE_SEARCH_PATH}:/usr/app
+      - recipe_search_data:/usr/data
+    ports:
+      - 2505:${RECIPE_SEARCH_API_PORT}
+    env_file:
+      - ${RECIPE_SEARCH_PATH}/.env
+    environment:
+      - DB_HOST=postgres-db
+      - DOMAIN_DEFAULT_FAISS_INDEX_PATH=/usr/data/faiss.index
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+
+  mssql-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    volumes:
+      - mssql_data:/var/opt/mssql
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${MSSQL_PASSWORD}
+    ports:
+      - 2603:1433
+    healthcheck:
+      test: [ "CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P ${MSSQL_PASSWORD} -C -Q 'SELECT 1' || exit 1" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-db:
+    image: postgres:14
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - 2605:5432
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      - POSTGRES_DB=${POSTGRES_NAME}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+volumes:
+  recipe_search_data:
+    name: recipesearch_data
+  postgres_data:
+    name: postgres_data
+  mssql_data:
+    name: mssql_data

@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-controller-cm
+data:
+  ASPNETCORE_ENVIRONMENT: Development
+  AllowedHosts: '*'
+  Api__Description: The controller service that connects backend components and the frontend.
+  Api__MajorVersion: "0"
+  Api__MinorVersion: "1"
+  Api__Title: IntelliCook App Controller API
+  Auth__BaseUrl: http://auth-api:2503/
+  Logging__LogLevel__Default: Information
+  Logging__LogLevel__Microsoft.AspNetCore: Warning
+  RecipeSearch__BaseUrl: http://recipe-search-api:2505/
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auth-cm
+data:
+  ASPNETCORE_ENVIRONMENT: Development
+  Admin__Role: Admin
+  AllowedHosts: '*'
+  Api__Description: The authentication service for IntelliCook.
+  Api__MajorVersion: "0"
+  Api__MinorVersion: "1"
+  Api__Title: IntelliCook Auth API
+  Database__Host: mssql-db
+  Database__Name: AuthContext
+  Database__UseInMemory: "false"
+  Jwt__Audience: IntelliCook.Auth.Client
+  Jwt__Issuer: IntelliCook.Auth.Host
+  Logging__LogLevel__Default: Information
+  Logging__LogLevel__Microsoft.AspNetCore: Warning
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: recipe-search-cm
+data:
+  API_PORT: "2505"
+  DB_HOST: postgres-db
+  DB_NAME: recipe_search
+  DOMAIN_EMBEDDING_MODEL: qwen
+  DOMAIN_CHAT_MODEL: gpt4o
+  
