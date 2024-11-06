@@ -12,6 +12,7 @@ services:
     env_file:
       - ${APP_CONTROLLER_PATH}/.env
     environment:
+      - Build__GithubPat=${APP_CONTROLLER_Build__GithubPat}
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
 
   auth-api:
@@ -26,6 +27,7 @@ services:
       - ${AUTH_PATH}/.env
     environment:
       - Database__Host=mssql-db
+      - Database__Password=${MSSQL_PASSWORD}
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
     depends_on:
       mssql-db:
@@ -43,6 +45,9 @@ services:
       - ${RECIPE_SEARCH_PATH}/.env
     environment:
       - DB_HOST=postgres-db
+      - DB_NAME=${POSTGRES_NAME}
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
       - DOMAIN_DEFAULT_FAISS_INDEX_PATH=/usr/data/faiss.index
     depends_on:
       postgres-db:

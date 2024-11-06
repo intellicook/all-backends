@@ -31,3 +31,5 @@ docker-compose up
 We use [Kubernetes](https://kubernetes.io) to manage the environment in production.
 
 All the Kubernetes configuration files are in the `k8s` directory.
+
+**Note**: Our AWS EC2 instance do not run Kubernetes at the moment due to resource constraints.
