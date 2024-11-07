@@ -14,7 +14,9 @@ This repository contains the docker compose file for all the backends of Intelli
 
 We use [Docker](https://www.docker.com) and [Docker Compose](https://docs.docker.com/compose) to manage the environment in both development and production.
 
-Before starting anything, you have to define the environment variables in the `.env` file. Please note some variables should match the ones in the other services.
+Before starting anything, you have to define the environment variables in the `.env` file.
+
+The `docker-compose.yml` uses the `.env` files in the respective services, then override those with the `.env.example` file in this repository. The most essential environment variables are already in the current `.env.example` file.
 
 You can copy the `.env.example` file and fill in the values.
 ```bash

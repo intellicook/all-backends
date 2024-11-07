@@ -5,14 +5,16 @@ services:
       context: ${APP_CONTROLLER_PATH}
       dockerfile: ${APP_CONTROLLER_PATH}/IntelliCook.AppController.Api/Dockerfile
       args:
-        GITHUB_PAT: ${APP_CONTROLLER_Build__GithubPat}
+        GITHUB_PAT: ${GITHUB_PAT}
     ports:
       - 2501:8080
       - 2502:8081
     env_file:
       - ${APP_CONTROLLER_PATH}/.env
     environment:
-      - Build__GithubPat=${APP_CONTROLLER_Build__GithubPat}
+      - Auth__BaseUrl=http://auth-api:8080
+      - RecipeSearch__BaseUrl=http://recipe-search-api:2505
+      - Build__GithubPat=${GITHUB_PAT}
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
 
   auth-api:
@@ -28,6 +30,7 @@ services:
     environment:
       - Database__Host=mssql-db
       - Database__Password=${MSSQL_PASSWORD}
+      - Jwt__Secret=${AUTH_JWT_SECRET}
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
     depends_on:
       mssql-db:
@@ -40,7 +43,7 @@ services:
       - ${RECIPE_SEARCH_PATH}:/usr/app
       - recipe_search_data:/usr/data
     ports:
-      - 2505:${RECIPE_SEARCH_API_PORT}
+      - 2505:2505
     env_file:
       - ${RECIPE_SEARCH_PATH}/.env
     environment:
