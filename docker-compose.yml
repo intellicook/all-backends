@@ -31,6 +31,8 @@ services:
       - Database__Host=mssql-db
       - Database__Password=${MSSQL_PASSWORD}
       - Jwt__Secret=${AUTH_JWT_SECRET}
+      - Admin__Username=${ADMIN_USERNAME}
+      - Admin__Password=${ADMIN_PASSWORD}
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
     depends_on:
       mssql-db:
