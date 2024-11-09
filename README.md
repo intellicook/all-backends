@@ -10,6 +10,31 @@ This repository contains the docker compose file for all the backends of Intelli
 
 [🔎 Recipe Search](https://github.com/intellicook/recipe-search)
 
+## Quick Start
+
+To start all the services locally:
+
+1. Make sure you have [Docker](https://www.docker.com) and [Docker Compose](https://docs.docker.com/compose) installed.
+
+2. Clone all the repositories of the services from the [Services](#services) section.
+
+3. Copy the `.env.example` file in each repository to `.env`.
+
+4. Fill in the variables in the `.env` file in this repository, which are the most essential variables and they override the `.env` files in the respective services.
+    
+    - Other variables not in the `.env` file in this repository can be filled in the `.env` files in the respective services' repositories.
+
+5. Run docker compose:
+    ```bash
+    docker compose up
+    ```
+
+6. The services should be running now, you can reach them at the following URLs:
+
+    - App Controller [OpenAPI](https://www.openapis.org/) specification: http://localhost:2501/swagger/index.html/
+    - Auth [OpenAPI](https://www.openapis.org/) specification: http://localhost:2503/swagger/index.html/
+    - Recipe Search [gRPC](https://grpc.io/) (support server reflection): grpc://localhost:2505/
+
 ## Docker Compose
 
 We use [Docker](https://www.docker.com) and [Docker Compose](https://docs.docker.com/compose) to manage the environment in both development and production.
@@ -25,7 +50,7 @@ cp .env.example .env
 
 With Docker Compose, you can run the services in the `docker-compose.yml` file:
 ```bash
-docker-compose up
+docker compose up
 ```
 
 ## Kubernetes
