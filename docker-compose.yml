@@ -56,9 +56,13 @@ services:
       - AZURE_OPENAI_API_KEY=${RECIPE_SEARCH_AZURE_OPENAI_API_KEY}
       - AZURE_OPENAI_BASE_URL=${RECIPE_SEARCH_AZURE_OPENAI_BASE_URL}
       - DOMAIN_DEFAULT_FAISS_INDEX_PATH=/usr/data/faiss.index
+      - TYPESENSE_HOST=typesense-se
+      - TYPESENSE_API_KEY=${TYPESENSE_API_KEY}
     depends_on:
       postgres-db:
         condition: service_healthy
+      typesense-se:
+        condition: service_started
 
   mssql-db:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -91,6 +95,17 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
+  typesense-se:
+    image: typesense/typesense:27.1
+    restart: on-failure
+    ports:
+      - 2606:8108
+    environment:
+      - TYPESENSE_API_KEY=${TYPESENSE_API_KEY}
+      - TYPESENSE_DATA_DIR=/data
+    volumes:
+      - typesense_data:/data
+
 volumes:
   recipe_search_data:
     name: recipesearch_data
@@ -98,3 +113,5 @@ volumes:
     name: postgres_data
   mssql_data:
     name: mssql_data
+  typesense_data:
+    name: typesense_data

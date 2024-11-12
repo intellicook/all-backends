@@ -32,8 +32,38 @@ To start all the services locally:
 6. The services should be running now, you can reach them at the following URLs:
 
     - App Controller [OpenAPI](https://www.openapis.org/) specification: http://localhost:2501/swagger/index.html/
+
     - Auth [OpenAPI](https://www.openapis.org/) specification: http://localhost:2503/swagger/index.html/
+
     - Recipe Search [gRPC](https://grpc.io/) (support server reflection): grpc://localhost:2505/
+
+## Service Names
+
+All IntelliCook services are in the format `[service name]-api`, while all the third-party services are in the format `[service name]-[service type]`.
+
+The following service types are used:
+
+- `se`: Search Engine
+
+- `db`: Database
+
+## Ports
+
+All the ports are in 4-digit numbers.
+
+First 2 digits represents whether it is an IntelliCook service or a third-party service. `25` is for IntelliCook services and `26` is for third-party services.
+
+Last 2 digits are randomly assigned.
+
+Ports are assigned based on the following table, where rows are the first 2 digits and columns are the last 2 digits:
+
+```
+      | ##00   | ##01               | ##02   | ##03     | ##04   | ##05              | ##06
+------+--------+--------------------+--------+----------+--------+-------------------+--------------
+ 25## |        | app-controller-api |        | auth-api |        | recipe-search-api |
+------+--------+--------------------+--------+----------+--------+-------------------+--------------
+ 26## |        |                    |        | mssql-db |        | postgres-db       | typesense-se
+```
 
 ## Docker Compose
 
@@ -58,5 +88,7 @@ docker compose up
 We use [Kubernetes](https://kubernetes.io) to manage the environment in production.
 
 All the Kubernetes configuration files are in the `k8s` directory.
+
+**Important**: Kubernetes configuration files are outdated and need to be updated.
 
 **Note**: Our AWS EC2 instance do not run Kubernetes at the moment due to resource constraints.
