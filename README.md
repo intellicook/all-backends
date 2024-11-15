@@ -20,16 +20,27 @@ To start all the services locally:
 
 3. Copy the `.env.example` file in each repository to `.env`.
 
-4. Fill in the variables in the `.env` file in this repository, which are the most essential variables and they override the `.env` files in the respective services.
+4. You may also need to make `entrypoint.sh` in the `recipe-search` repository executable by running the following command in the repository:
+
+    ```bash
+    chmod +x entrypoint.sh
+    ```
+
+5. Fill in the variables in the `.env` file in this repository, which are the most essential variables and they override the `.env` files in the respective services.
     
     - Other variables not in the `.env` file in this repository can be filled in the `.env` files in the respective services' repositories.
 
-5. Run docker compose:
+6. Run docker compose:
     ```bash
     docker compose up
     ```
 
-6. The services should be running now, you can reach them at the following URLs:
+    - For ARM-based systems, because [MSSQL does not support ARM](https://github.com/microsoft/mssql-docker/issues/802), we have a separate docker compose file as a temporary solution:
+        ```bash
+        docker compose -f docker-compose-arm.yml up
+        ```
+
+7. The services should be running now, you can reach them at the following URLs:
 
     - App Controller [OpenAPI](https://www.openapis.org/) specification: http://localhost:2501/swagger/index.html/
 
