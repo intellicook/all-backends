@@ -69,11 +69,11 @@ Last 2 digits are randomly assigned.
 Ports are assigned based on the following table, where rows are the first 2 digits and columns are the last 2 digits:
 
 ```
-      | ##00   | ##01               | ##02   | ##03     | ##04   | ##05              | ##06
-------+--------+--------------------+--------+----------+--------+-------------------+--------------
- 25## |        | app-controller-api |        | auth-api |        | recipe-search-api |
-------+--------+--------------------+--------+----------+--------+-------------------+--------------
- 26## |        |                    |        | mssql-db |        | postgres-db       | typesense-se
+      | ##00   | ##01               | ##02   | ##03     | ##04   | ##05              | ##06         | ##07
+------+--------+--------------------+--------+----------+--------+-------------------+--------------+---------------------------
+ 25## |        | app-controller-api |        | auth-api |        | recipe-search-api |              | ingredient-recognition-api
+------+--------+--------------------+--------+----------+--------+-------------------+--------------+---------------------------
+ 26## |        |                    |        | mssql-db |        | postgres-db       | typesense-se |
 ```
 
 ## Docker Compose

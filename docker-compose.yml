@@ -64,6 +64,16 @@ services:
       typesense-se:
         condition: service_started
 
+  ingredient-recognition-api:
+    image: intellicook.ingredientrecognition.api
+    build: ${INGREDIENT_RECOGNITION_PATH}
+    volumes:
+      - ${INGREDIENT_RECOGNITION_PATH}:/usr/app
+    ports:
+      - 2507:2507
+    env_file:
+      - ${INGREDIENT_RECOGNITION_PATH}/.env
+
   mssql-db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     volumes:
