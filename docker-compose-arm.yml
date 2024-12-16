@@ -14,6 +14,7 @@ services:
     environment:
       - Auth__BaseUrl=http://auth-api:8080
       - RecipeSearch__BaseUrl=http://recipe-search-api:2505
+      - IngredientRecognition__BaseUrl=http://ingredient-recognition-api:2507
       - Build__GithubPat=${GITHUB_PAT}
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
 
